@@ -209,6 +209,9 @@ export default {
   created () {
     this.setInitialSize()
   },
+  mounted() {
+    document.body.appendChild(this.$el)
+  },
   /**
    * Sets global listeners
    */
