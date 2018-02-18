@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 import Modal from './Modal.vue'
 import Dialog from './Dialog.vue'
 import ModalsContainer from './ModalsContainer.vue'
@@ -5,28 +7,17 @@ import ModalsContainer from './ModalsContainer.vue'
 const defaultComponentName = 'modal'
 
 const Plugin = {
-  install (Vue, options = {}) {
-    /**
-     * Makes sure that plugin can be insstalled only once
-     */
-    if (this.installed) {
-      return
-    }
+  modal() {
+    return {
+      _event: new Vue({ modal: {} }),
 
-    this.installed = true
-    this.event = new Vue()
-    this.dynamicContainer = null
-    this.componentName = options.componentName || defaultComponentName
-    /**
-     * Plugin API
-     */
-    Vue.prototype.$modal = {
       _setDynamicContainer (dynamicContainer) {
         Plugin.dynamicContainer = dynamicContainer
       },
+
       show (modal, paramsOrProps, params) {
         if (typeof modal === 'string') {
-          Plugin.event.$emit('toggle', modal, true, paramsOrProps)
+          this._event.$emit('toggle', modal, true, paramsOrProps)
         } else {
           if (Plugin.dynamicContainer === null) {
             console.warn('[vue-js-modal] In order to render dynamic modals, a <modals-container> component must be present on the page')
@@ -35,29 +26,51 @@ const Plugin = {
           }
         }
       },
+
       hide (name, params) {
-        Plugin.event.$emit('toggle', name, false, params)
+        this._event.$emit('toggle', name, false, params)
       },
 
       toggle (name, params) {
-        Plugin.event.$emit('toggle', name, undefined, params)
+        this._event.$emit('toggle', name, undefined, params)
       }
     }
+  },
+
+  install (_Vue, options = {}) {
+    this.dynamicContainer = null
+    this.componentName = options.componentName || defaultComponentName
+
+    _Vue.mixin({
+      created() {
+        const options = this.$options
+
+        if (options.modal) {
+          this.$modal = typeof options.modal === 'function'
+            ? options.modal()
+            : options.modal
+        } else if (options.parent && options.parent.$modal) {
+          this.$modal = options.parent.$modal
+        } else {
+          this.$modal = Plugin.modal()
+        }
+      }
+    })
     /**
      * Sets custom component name (if provided)
      */
-    Vue.component(this.componentName, Modal)
+    _Vue.component(this.componentName, Modal)
     /**
      * Registration of <Dialog/> component
      */
     if (options.dialog) {
-      Vue.component('v-dialog', Dialog)
+      _Vue.component('v-dialog', Dialog)
     }
     /**
      * Registration of <ModalsContainer/> component
      */
     if (options.dynamic) {
-      Vue.component('modals-container', ModalsContainer)
+      _Vue.component('modals-container', ModalsContainer)
     }
   }
 }

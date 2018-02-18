@@ -28,7 +28,6 @@
   </transition>
 </template>
 <script>
-import Modal from './index'
 import Resizer from './Resizer.vue'
 import { inRange } from './util'
 import parseNumber from './parser'
@@ -216,7 +215,7 @@ export default {
    * Sets global listeners
    */
   beforeMount () {
-    Modal.event.$on('toggle', (name, state, params) => {
+    this.$modal._event.$on('toggle', (name, state, params) => {
       if (name === this.name) {
         if (typeof state === 'undefined') {
           state = !this.visible
