@@ -211,6 +211,9 @@ export default {
   mounted() {
     document.body.appendChild(this.$el)
   },
+  destroyed() {
+    document.body.removeChild(this.$el)
+  },
   /**
    * Sets global listeners
    */

@@ -2733,6 +2733,9 @@
             mounted: function() {
                 document.body.appendChild(this.$el);
             },
+            destroyed: function() {
+                document.body.removeChild(this.$el);
+            },
             beforeMount: function() {
                 var _this2 = this;
                 if (this.$modal._event.$on("toggle", function(name, state, params) {
