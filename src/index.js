@@ -4,7 +4,7 @@ import Modal from './Modal.vue'
 import Dialog from './Dialog.vue'
 import ModalsContainer from './ModalsContainer.vue'
 
-const defaultComponentName = 'modal'
+const defaultComponentName = 'Modal'
 
 const Plugin = {
   modal() {
@@ -64,13 +64,13 @@ const Plugin = {
      * Registration of <Dialog/> component
      */
     if (options.dialog) {
-      _Vue.component('v-dialog', Dialog)
+      _Vue.component('VDialog', Dialog)
     }
     /**
      * Registration of <ModalsContainer/> component
      */
     if (options.dynamic) {
-      _Vue.component('modals-container', ModalsContainer)
+      _Vue.component('ModalsContainer', ModalsContainer)
     }
   }
 }
